@@ -5,12 +5,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
 using System.Linq;
+using TMPro;
 
 namespace PLATEAU.Samples
 {
     public class Show : MonoBehaviour, GISSampleInputActions.IGISSampleActions
     {
-        private SceneManage SceneManageScript;
+        private UIManage UIManageScript;
         private GameManage GameManageScript;
         [SerializeField, Tooltip("選択中オブジェクトの色")] private Color selectedColor;
         private SampleCityObject selectCityObject;
@@ -18,9 +19,12 @@ namespace PLATEAU.Samples
         private GameObject selectedHintItem;
         private GISSampleInputActions inputActions;
         private bool isInitialiseFinish;
+        private string GMLText;
+        private GameObject displaySelectGML;
+
         private void Awake()
         {
-            SceneManageScript = GameObject.Find("SceneManager").GetComponent<SceneManage>();
+            UIManageScript = GameObject.Find("UIManager").GetComponent<UIManage>();
             GameManageScript = GameObject.Find("GameManager").GetComponent<GameManage>();
             inputActions = new GISSampleInputActions();
         }
@@ -77,7 +81,7 @@ namespace PLATEAU.Samples
         private void SelectHintItem(Transform trans)
         {
             GameObject.Find(trans.name).GetComponent<Renderer>().material.color = selectedColor;
-            var tmpvalue = GameManageScript.data.GetKeyValues();
+            var tmpvalue = GameManageScript.correctGMLdata.GetKeyValues();
             foreach(var t in tmpvalue)
             {
                 if(t.Key.Path.Contains(trans.name))
@@ -89,21 +93,26 @@ namespace PLATEAU.Samples
         }
         private void SelectCityObject(Transform trans)
         {
-            selectCityObject = SceneManageScript.gmls[trans.parent.parent.name].CityObjects[trans.name];
+            selectCityObject = UIManageScript.gmls[trans.parent.parent.name].CityObjects[trans.name];
             // 選択した建物の色を変更する
             if(selectCityObject != selectedCityObject)
             {
                 selectCityObject.SetMaterialColor(selectedColor);
-                selectedCityObject = SceneManageScript.gmls[trans.parent.parent.name].CityObjects[trans.name];
+                selectedCityObject = UIManageScript.gmls[trans.parent.parent.name].CityObjects[trans.name];
             }
 
+            GMLText = "";
             //対象の建物のGMLデータを取得
             var data = GetAttribute(trans.parent.parent.name, trans.name);
             var tmpV = data.GetKeyValues();
             foreach(var t in tmpV)
             {
-                Debug.Log(t.Key.Path + "  :  " + t.Value);
+                GMLText += t.Key.Path + "  :  " + t.Value + "/n";
             }
+            displaySelectGML = GameObject.Find("SelectBuildingGML");
+            TextMeshProUGUI  displayMesh = displaySelectGML.GetComponent<TextMeshProUGUI>();
+            displayMesh.text = GMLText;
+
         }
 
         /// <summary>
@@ -132,7 +141,7 @@ namespace PLATEAU.Samples
         /// </summary>
         public SampleAttribute GetAttribute(string gmlFileName, string cityObjectID)
         {
-            if (SceneManageScript.gmls.TryGetValue(gmlFileName, out SampleGml gml))
+            if (UIManageScript.gmls.TryGetValue(gmlFileName, out SampleGml gml))
             {
                 if (gml.CityObjects.TryGetValue(cityObjectID, out SampleCityObject city))
                 {
@@ -146,7 +155,7 @@ namespace PLATEAU.Samples
         {
             if (context.performed)
             {
-                if(SceneManageScript.IsInitialiseFinish)
+                if(UIManageScript.isInitialiseFinish)
                 {
                     SelectObject();
                 }

@@ -125,7 +125,7 @@ namespace StarterAssets
 
         // ============================================================
 
-        private SceneManage sceneManage;
+        private UIManage UIManage;
         private GameManage GameManageScript;
 
 
@@ -159,7 +159,7 @@ namespace StarterAssets
 
             // ===========================================
 
-            sceneManage = GameObject.Find("SceneManager").GetComponent<SceneManage>();
+            UIManage = GameObject.Find("UIManager").GetComponent<UIManage>();
             GameManageScript = GameObject.Find("GameManager").GetComponent<GameManage>();
         }
 
@@ -167,7 +167,7 @@ namespace StarterAssets
         {
             _hasAnimator = TryGetComponent(out _animator);
             
-            if(sceneManage.SceneName == "MainCamera")
+            if(UIManage.SceneName == "MainCamera")
             {
                 Move();
             }
@@ -317,7 +317,7 @@ namespace StarterAssets
                 
                 // Jump
                 //_jumpTimeoutDeltaを0.5以下にしないとジャンプしなくなる Time.DeltaがSceneManager関連で0.3ぐらいになる
-                if (_input.jump && _jumpTimeoutDelta <= 0.5f && sceneManage.SceneName == "MainCamera")
+                if (_input.jump && _jumpTimeoutDelta <= 0.5f && UIManage.SceneName == "MainCamera")
                 {
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
@@ -413,9 +413,9 @@ namespace StarterAssets
             if(hit.gameObject.tag == "Hint")
             {
                 //ヒントフィルターの発動
-                sceneManage.Filter(hit.gameObject.name);
+                UIManage.Filter(hit.gameObject.name);
                 //ヒントをCOnsolに表示
-                var tmp = GameManageScript.data.GetKeyValues();
+                var tmp = GameManageScript.correctGMLdata.GetKeyValues();
                 foreach(var t in tmp)
                 {
                     if(t.Key.Path.Contains(hit.gameObject.name))

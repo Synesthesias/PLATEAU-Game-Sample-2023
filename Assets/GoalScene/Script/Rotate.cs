@@ -7,17 +7,17 @@ namespace PLATEAU.Samples
     public class Rotate : MonoBehaviour
     {
         private Vector3 angle;
-        private SceneManage sceneManage;
+        private UIManage UIManage;
 
         void Start()
         {
             angle = this.gameObject.transform.localEulerAngles;
-            sceneManage = GameObject.Find("SceneManager").GetComponent<SceneManage>();
+            UIManage = GameObject.Find("UIManager").GetComponent<UIManage>();
         }
 
         void Update()
         {
-            if(sceneManage.SceneName == "GoalCamera")
+            if(UIManage.SceneName == "GoalCamera")
             {
                 RotateCamera();
             }

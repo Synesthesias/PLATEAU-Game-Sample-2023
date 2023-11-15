@@ -51,16 +51,7 @@ namespace PLATEAU.Samples
         /// <summary>
         /// Usage
         /// </summary>
-        RoofEdgeArea,
-        ZonesType,
         Usage,
-        UseType,
-
-
-        /// <summary>
-        /// 浸水ランク
-        /// </summary>
-        FloodingRank,
     }
 
 
@@ -209,6 +200,7 @@ namespace PLATEAU.Samples
     /// </summary>
     public class SampleCityObject
     {
+        private string correctData;
         public readonly string Id;
         public readonly CityObject CityObject;
 
@@ -275,7 +267,7 @@ namespace PLATEAU.Samples
         /// <param name="type"></param>
         /// <param name="colorTable"></param>
         /// <param name="areaName">浸水エリア名</param>
-        public void ColorCode(ColorCodeType type, Color[] colorTable)
+        public void ColorCode(ColorCodeType type, Color[] colorTable,SampleAttribute attribute)
         {
 
             switch (type)
@@ -285,18 +277,32 @@ namespace PLATEAU.Samples
                     SetMaterialColor(Color.white);
                     break;
                 case ColorCodeType.measuredheight:
-                    ColorCodeByHeight(colorTable);
+                    foreach(var t in attribute.GetKeyValues())
+                    {
+                        if(t.Key.Path.Contains("measuredheight"))
+                        {
+                            correctData = t.Value;
+                        }
+                    }
+                    ColorCodeByHeight(colorTable,float.Parse(correctData));
                     break;
                 case ColorCodeType.Usage:
-                    ColorCodeByUsage(colorTable);
+                    foreach(var t in attribute.GetKeyValues())
+                    {
+                        if(t.Key.Path.Contains("Usage"))
+                        {
+                            correctData = t.Value;
+                        }
+                    }
+                    ColorCodeByUsage(colorTable,correctData);
                     break;
             }
         }
 
 
-        private void ColorCodeByHeight(Color[] colorTable)
+        private void ColorCodeByHeight(Color[] colorTable,float correctheight)
         {
-            Assert.AreEqual(6, colorTable.Length, "高さの色分けは6色");
+            Assert.AreEqual(1, colorTable.Length, "高さの色分けは1色");
 
             if (!Attribute.MeasuredHeight.HasValue)
             {
@@ -305,60 +311,69 @@ namespace PLATEAU.Samples
             }
 
             var height = Attribute.MeasuredHeight.Value;
-            if (height <= 12)
+            if (height <= 12 && correctheight <= 12)
             {
                 SetMaterialColor(colorTable[0]);
             }
-            else if (height > 12 && height <= 31)
+            else if (height > 12 && height <= 31 && correctheight > 12 && correctheight <= 31)
             {
-                SetMaterialColor(colorTable[1]);
+                SetMaterialColor(colorTable[0]);
             }
-            else if (height > 31 && height <= 60)
+            else if (height > 31 && height <= 60 && correctheight > 31 && correctheight <= 60)
             {
-                SetMaterialColor(colorTable[2]);
+                SetMaterialColor(colorTable[0]);
             }
-            else if (height > 60 && height <= 120)
+            else if (height > 60 && height <= 120 && correctheight > 60 && correctheight <= 120)
             {
-                SetMaterialColor(colorTable[3]);
+                SetMaterialColor(colorTable[0]);
             }
-            else if (height > 120 && height <= 180)
+            else if (height > 120 && height <= 180 && correctheight > 120 && correctheight <= 180)
             {
-                SetMaterialColor(colorTable[4]);
+                SetMaterialColor(colorTable[0]);
+            }
+            else if (height > 180 && correctheight > 180)
+            {
+                SetMaterialColor(colorTable[0]);
             }
             else
             {
-                SetMaterialColor(colorTable[5]);
+                SetMaterialColor(Color.white);
             }
         }
-        private void ColorCodeByUsage(Color[] colorTable)
+        private void ColorCodeByUsage(Color[] colorTable,string correctData)
         {
-            Assert.AreEqual(4, colorTable.Length, "使用用途の色分けは4色");
+            Assert.AreEqual(1, colorTable.Length, "使用用途の色分けは1色");
             if(Attribute.UsageName == null)
             {
                 SetMaterialColor(Color.white);
                 return;
             }
             var usageName =  Attribute.UsageName;
-            if(usageName == "集合住宅")
+
+            if(usageName == correctData)
             {
                 SetMaterialColor(colorTable[0]);
-                return;
             }
-            if(usageName == "独立住宅")
-            {
-                SetMaterialColor(colorTable[1]);
-                return;
-            }
-            if(usageName == "事務所建築物")
-            {
-                SetMaterialColor(colorTable[2]);
-                return;
-            }
-            if(usageName == "住商併用建物")
-            {
-                SetMaterialColor(colorTable[3]);
-                return;
-            }
+            // if(usageName == "集合住宅")
+            // {
+            //     SetMaterialColor(colorTable[0]);
+            //     return;
+            // }
+            // if(usageName == "独立住宅")
+            // {
+            //     SetMaterialColor(colorTable[0]);
+            //     return;
+            // }
+            // if(usageName == "事務所建築物")
+            // {
+            //     SetMaterialColor(colorTable[0]);
+            //     return;
+            // }
+            // if(usageName == "住商併用建物")
+            // {
+            //     SetMaterialColor(colorTable[0]);
+            //     return;
+            // }
         }
 
 
@@ -420,6 +435,8 @@ namespace PLATEAU.Samples
         public readonly GameObject GameObject;
         public readonly Dictionary<string, SampleCityObject> CityObjects;
         public readonly HashSet<string> FloodingAreaNames;
+        private GameManage GameManageScript = GameObject.Find("GameManager").GetComponent<GameManage>();
+
 
         public SampleGml(CityModel cityModel, GameObject gameObject)
         {
@@ -501,7 +518,7 @@ namespace PLATEAU.Samples
         {
             foreach (var keyValue in CityObjects)
             {
-                keyValue.Value.ColorCode(type, colorTable);
+                keyValue.Value.ColorCode(type, colorTable,GameManageScript.correctGMLdata);
             }
         }
     }

@@ -1,3 +1,4 @@
+// 正解データがある大元
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,8 +12,8 @@ namespace PLATEAU.Samples
     {
         // [SerializeField, Tooltip("ヒント:height")] private GameObject Hint_height;
         // スクリプト名 変数(自由)
-        private SceneManage SceneManageScript;
-        public SampleAttribute data;
+        private UIManage UIManageScript;
+        public SampleAttribute correctGMLdata;
         private Show ShowScript;
         private bool isInitialiseFinish = false;
         private GameObject goalBuilding;
@@ -45,7 +46,7 @@ namespace PLATEAU.Samples
         void Start()
         {
             //SceneManagerからShow.csにアクセスする
-            SceneManageScript = GameObject.Find("SceneManager").GetComponent<SceneManage>();
+            UIManageScript = GameObject.Find("UIManager").GetComponent<UIManage>();
             rnd = new System.Random();
             //Hintのリストを作る
             hintLst = GameObject.FindGameObjectsWithTag("Hint");
@@ -57,6 +58,7 @@ namespace PLATEAU.Samples
 
             
         }
+
         /// <summary>
         /// ランダムな位置にゴールを設置する
         /// </summary>
@@ -65,10 +67,10 @@ namespace PLATEAU.Samples
             while(!isSetGMLdata)
             {
                 //ランダムに建物を指定
-                rndBuilding = SceneManageScript.gmls["53394525_bldg_6697_1_op.gml"].CityObjects.ElementAt(rnd.Next(0, SceneManageScript.gmls["53394525_bldg_6697_1_op.gml"].CityObjects.Count));
+                rndBuilding = UIManageScript.gmls["53394525_bldg_6697_1_op.gml"].CityObjects.ElementAt(rnd.Next(0, UIManageScript.gmls["53394525_bldg_6697_1_op.gml"].CityObjects.Count));
                 //ゴールのGMLデータ
-                data = rndBuilding.Value.Attribute;
-                isSetGMLdata = CheckGMLdata(data);
+                correctGMLdata = rndBuilding.Value.Attribute;
+                isSetGMLdata = CheckGMLdata(correctGMLdata);
             }
 
             //選ばれた建物の情報を取得
@@ -83,25 +85,26 @@ namespace PLATEAU.Samples
 
         private bool CheckGMLdata(SampleAttribute buildingData)
         {
-            bool isData = false;
+            bool isSetData = false;
             foreach(GameObject hint in hintLst)
             {
-                isData = false;
+                isSetData = false;
                 foreach(var t in buildingData.GetKeyValues())
                 {
                     if(t.Key.Path.Contains(hint.name))
                     {
-                        isData = true;
+                        isSetData = true;
                         break;
                     }
                 }
-                if(!isData)
+                if(!isSetData)
                 {
                     break;
                 }
             }
-            return isData;
+            return isSetData;
         }
+
 
         // private void SetHintItem()
         // {
@@ -140,7 +143,7 @@ namespace PLATEAU.Samples
         /// </summary>
         private bool IsInitialiseFinished()
         {
-            if(SceneManageScript.IsInitialiseFinish)
+            if(UIManageScript.isInitialiseFinish)
             {
                 SelectGoal();
                 // SetHintItem();
