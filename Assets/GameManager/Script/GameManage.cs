@@ -10,18 +10,15 @@ namespace PLATEAU.Samples
 {
     public class GameManage : MonoBehaviour,InputGame.IGameInputActions
     {
-        // [SerializeField, Tooltip("ヒント:height")] private GameObject Hint_height;
-        // スクリプト名 変数(自由)
         private UIManage UIManageScript;
         public SampleAttribute correctGMLdata;
-        private Show ShowScript;
         private bool isInitialiseFinish = false;
         private GameObject goalBuilding;
         private Bounds goalBounds;
         private Vector3 goalPos;
         private System.Random rnd;
         private InputGame inputActions;
-        private GameObject[] hintLst;
+        private GameObject[] HintLst;
         private bool isSetGMLdata;
         KeyValuePair<string, PLATEAU.Samples.SampleCityObject> rndBuilding;
         void Awake()
@@ -45,18 +42,17 @@ namespace PLATEAU.Samples
 
         void Start()
         {
+            inputActions.GameInput.AddCallbacks(this);
+            rnd = new System.Random();
             //SceneManagerからShow.csにアクセスする
             UIManageScript = GameObject.Find("UIManager").GetComponent<UIManage>();
-            rnd = new System.Random();
             //Hintのリストを作る
-            hintLst = GameObject.FindGameObjectsWithTag("Hint");
-            //コルーチン開始
+            HintLst = GameObject.FindGameObjectsWithTag("Hint");
+            //コルーチン開始(Plateauのデータの取得が終わった後の処理を実行)
             StartCoroutine(WatiForInitialise());
+
             //20秒後にCalDistanceを実行
             // Invoke(nameof(CalDistance), 20f);
-            inputActions.GameInput.AddCallbacks(this);
-
-            
         }
 
         /// <summary>
@@ -73,7 +69,7 @@ namespace PLATEAU.Samples
                 isSetGMLdata = CheckGMLdata(correctGMLdata);
             }
 
-            //選ばれた建物の情報を取得
+            //正解の建物の情報を取得
             goalBuilding = GameObject.Find(rndBuilding.Key);
             goalBounds = goalBuilding.GetComponent<MeshCollider>().sharedMesh.bounds;
             //選ばれた建物の位置情報を取得
@@ -83,10 +79,15 @@ namespace PLATEAU.Samples
             GameObject.Find("GoalSceneCamera").transform.position = goalPos;
         }
 
+
+        /// <summary>
+        /// 必要なGMLデータがそろっているか判定する
+        /// </summary>
         private bool CheckGMLdata(SampleAttribute buildingData)
         {
             bool isSetData = false;
-            foreach(GameObject hint in hintLst)
+            
+            foreach(GameObject hint in HintLst)
             {
                 isSetData = false;
                 foreach(var t in buildingData.GetKeyValues())
@@ -105,13 +106,6 @@ namespace PLATEAU.Samples
             return isSetData;
         }
 
-
-        // private void SetHintItem()
-        // {
-        //     Hint_height.gameObject.SetActive(true);
-        // }
-
-
         /// <summary>
         /// ゴールとプレイヤーの距離を計測する
         /// </summary>
@@ -119,37 +113,40 @@ namespace PLATEAU.Samples
         {
             float userPosX = GameObject.Find("PlayerArmature").transform.position.x;
             float userPosZ = GameObject.Find("PlayerArmature").transform.position.z;
-
             float distance = Vector2.Distance(new Vector2(userPosX,userPosZ),new Vector2(goalPos.x,goalPos.z));
+
             Debug.Log("ゴールとの距離 : " + distance);
         }
 
+
+        /// <summary>
+        /// Plateauのデータの取得が終わった後の処理
+        /// </summary> 
+        IEnumerator WatiForInitialise()
+        {
+            // yield return ->　ある関数が終わるまで待つ
+            yield return new WaitUntil(() => IsInitialiseFinished());
+        }
+        private bool IsInitialiseFinished()
+        {
+            if(UIManageScript.isInitialiseFinish)
+            {
+                SelectGoal();
+                isInitialiseFinish = true;
+            }
+            return isInitialiseFinish;
+        }
+
+
+        /// <summary>
+        /// 入力に対する処理(OnFinish : Keyboard F)
+        /// </summary> 
         public void OnFinish(InputAction.CallbackContext context)
         {
             if(context.performed)
             {
                 CalDistance();
             }
-        }
-
-        IEnumerator WatiForInitialise()
-        {
-            // yield return ->　ある関数が終わるまで待つ
-            yield return new WaitUntil(() => IsInitialiseFinished());
-        }
-
-        /// <summary>
-        /// 都市データがロードされるまで待つ 
-        /// </summary>
-        private bool IsInitialiseFinished()
-        {
-            if(UIManageScript.isInitialiseFinish)
-            {
-                SelectGoal();
-                // SetHintItem();
-                isInitialiseFinish = true;
-            }
-            return isInitialiseFinish;
         }
     }
 }

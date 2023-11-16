@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Position : MonoBehaviour
+public class MapPosition : MonoBehaviour
 {
     Transform Player;
     Transform OverLook;
@@ -12,6 +12,7 @@ public class Position : MonoBehaviour
         Player = GameObject.Find("PlayerArmature").transform;
         OverLook = this.transform;
 
+        // ヒントオブジェクトの真上にマップ用の青いキューブを配置する
         foreach(Transform child in GameObject.Find("Hint").transform)
         {
             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -23,6 +24,7 @@ public class Position : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // プレイヤーの座標に合わせてカメラの位置を変更する
         OverLook.position = new Vector3(Player.position.x,0,Player.position.z);
     }
 }

@@ -44,6 +44,15 @@ public partial class @InputScene: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SelectObject"",
+                    ""type"": ""Button"",
+                    ""id"": ""b3808322-c0a3-4bc2-a8d1-0bd0521501c6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -68,6 +77,17 @@ public partial class @InputScene: IInputActionCollection2, IDisposable
                     ""action"": ""ChangeFilterScene"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e87adb06-4719-4f90-a85b-b75d03df5ea0"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""Tap"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SelectObject"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -78,6 +98,7 @@ public partial class @InputScene: IInputActionCollection2, IDisposable
         m_SelectScene = asset.FindActionMap("SelectScene", throwIfNotFound: true);
         m_SelectScene_ChangeCameraScene = m_SelectScene.FindAction("ChangeCameraScene", throwIfNotFound: true);
         m_SelectScene_ChangeFilterScene = m_SelectScene.FindAction("ChangeFilterScene", throwIfNotFound: true);
+        m_SelectScene_SelectObject = m_SelectScene.FindAction("SelectObject", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -141,12 +162,14 @@ public partial class @InputScene: IInputActionCollection2, IDisposable
     private List<ISelectSceneActions> m_SelectSceneActionsCallbackInterfaces = new List<ISelectSceneActions>();
     private readonly InputAction m_SelectScene_ChangeCameraScene;
     private readonly InputAction m_SelectScene_ChangeFilterScene;
+    private readonly InputAction m_SelectScene_SelectObject;
     public struct SelectSceneActions
     {
         private @InputScene m_Wrapper;
         public SelectSceneActions(@InputScene wrapper) { m_Wrapper = wrapper; }
         public InputAction @ChangeCameraScene => m_Wrapper.m_SelectScene_ChangeCameraScene;
         public InputAction @ChangeFilterScene => m_Wrapper.m_SelectScene_ChangeFilterScene;
+        public InputAction @SelectObject => m_Wrapper.m_SelectScene_SelectObject;
         public InputActionMap Get() { return m_Wrapper.m_SelectScene; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -162,6 +185,9 @@ public partial class @InputScene: IInputActionCollection2, IDisposable
             @ChangeFilterScene.started += instance.OnChangeFilterScene;
             @ChangeFilterScene.performed += instance.OnChangeFilterScene;
             @ChangeFilterScene.canceled += instance.OnChangeFilterScene;
+            @SelectObject.started += instance.OnSelectObject;
+            @SelectObject.performed += instance.OnSelectObject;
+            @SelectObject.canceled += instance.OnSelectObject;
         }
 
         private void UnregisterCallbacks(ISelectSceneActions instance)
@@ -172,6 +198,9 @@ public partial class @InputScene: IInputActionCollection2, IDisposable
             @ChangeFilterScene.started -= instance.OnChangeFilterScene;
             @ChangeFilterScene.performed -= instance.OnChangeFilterScene;
             @ChangeFilterScene.canceled -= instance.OnChangeFilterScene;
+            @SelectObject.started -= instance.OnSelectObject;
+            @SelectObject.performed -= instance.OnSelectObject;
+            @SelectObject.canceled -= instance.OnSelectObject;
         }
 
         public void RemoveCallbacks(ISelectSceneActions instance)
@@ -193,5 +222,6 @@ public partial class @InputScene: IInputActionCollection2, IDisposable
     {
         void OnChangeCameraScene(InputAction.CallbackContext context);
         void OnChangeFilterScene(InputAction.CallbackContext context);
+        void OnSelectObject(InputAction.CallbackContext context);
     }
 }
