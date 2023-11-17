@@ -13,6 +13,7 @@ namespace PLATEAU.Samples
         {
             angle = this.gameObject.transform.localEulerAngles;
             UIManage = GameObject.Find("UIManager").GetComponent<UIManage>();
+            
         }
 
         void Update()
