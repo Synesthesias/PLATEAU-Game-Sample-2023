@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="background-image: url(&apos;project://database/Assets/Images/%E7%84%A1%E9%A1%8C.png?fileID=2800000&amp;guid=129c7174ffef87348a1a54807f8cc6e4&amp;type=3#無題&apos;); height: 564px; width: 214px;">
+        <ui:Label text="目的の建物情報" display-tooltip-when-elided="true" name="CorrectBuildingGML" style="font-size: 20px; -unity-font-style: bold; -unity-text-align: upper-right; background-color: rgba(0, 0, 0, 0); color: rgb(4, 166, 180); position: absolute; height: 40px; width: 149px; top: 26px; left: 58px;">
+            <ui:Label display-tooltip-when-elided="true" name="CorrectBuildingLabel" style="top: 50px;" />
+        </ui:Label>
+        <ui:Label text="選択した建物の情報" display-tooltip-when-elided="true" name="SelectBuildingGML" style="padding-left: 11px; padding-right: 12px; padding-top: 4px; padding-bottom: 6px; top: 260px; font-size: 20px; -unity-font-style: bold; background-color: rgba(0, 0, 0, 0); color: rgb(16, 164, 174); position: absolute; left: 3px; width: 199px;">
+            <ui:Label display-tooltip-when-elided="true" name="SelectBuildingLabel" style="top: 50px;" />
+        </ui:Label>
+    </ui:VisualElement>
+</ui:UXML>

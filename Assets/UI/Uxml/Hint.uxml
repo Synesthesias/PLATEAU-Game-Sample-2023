@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="background-image: url(&apos;project://database/Assets/Images/%E7%84%A1%E9%A1%8C.png?fileID=2800000&amp;guid=129c7174ffef87348a1a54807f8cc6e4&amp;type=3#無題&apos;); height: 564px; width: 214px; max-width: none; max-height: none;">
+        <ui:Label text="GMLフィルター" display-tooltip-when-elided="true" name="Header1" style="background-color: rgba(43, 43, 43, 0); -unity-background-image-tint-color: rgb(255, 255, 255); color: rgb(16, 164, 174); -unity-font-style: bold; font-size: 20px; padding-left: 11px; padding-right: 12px; padding-top: 4px; padding-bottom: 6px; -unity-text-outline-color: rgba(0, 0, 0, 0); top: 46px; -unity-text-align: upper-right; position: absolute; width: 147px; left: 84px;">
+            <ui:Label display-tooltip-when-elided="true" name="FilterLabel" style="top: 40px;" />
+        </ui:Label>
+        <ui:Label text="生存者の位置" display-tooltip-when-elided="false" name="Header2" style="bottom: 172px; color: rgb(16, 164, 174); background-color: rgba(43, 43, 43, 0); padding-left: 11px; padding-right: 12px; padding-top: 4px; padding-bottom: 6px; font-size: 20px; -unity-text-align: upper-left; -unity-font-style: bold; top: 271px; position: absolute; width: 150px; left: 3px;">
+            <ui:Label display-tooltip-when-elided="true" name="DistanceLabel" style="top: 40px;" />
+        </ui:Label>
+    </ui:VisualElement>
+</ui:UXML>

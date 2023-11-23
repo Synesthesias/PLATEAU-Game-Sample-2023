@@ -125,9 +125,7 @@ namespace StarterAssets
 
         // ============================================================
 
-        private SceneManage sceneManage;
-        private GameManage GameManageScript;
-
+        private UIManage UIManageScript;
 
         private void Awake()
         {
@@ -159,15 +157,14 @@ namespace StarterAssets
 
             // ===========================================
 
-            sceneManage = GameObject.Find("SceneManager").GetComponent<SceneManage>();
-            GameManageScript = GameObject.Find("GameManager").GetComponent<GameManage>();
+            UIManageScript = GameObject.Find("UIManager").GetComponent<UIManage>();
         }
 
         private void Update()
         {
             _hasAnimator = TryGetComponent(out _animator);
             
-            if(sceneManage.SceneName == "MainCamera")
+            if(UIManageScript.SceneName == "MainCamera")
             {
                 Move();
             }
@@ -317,7 +314,7 @@ namespace StarterAssets
                 
                 // Jump
                 //_jumpTimeoutDeltaを0.5以下にしないとジャンプしなくなる Time.DeltaがSceneManager関連で0.3ぐらいになる
-                if (_input.jump && _jumpTimeoutDelta <= 0.5f && sceneManage.SceneName == "MainCamera")
+                if (_input.jump && _jumpTimeoutDelta <= 0.5f && UIManageScript.SceneName == "MainCamera")
                 {
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
@@ -405,27 +402,6 @@ namespace StarterAssets
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
-        }
-        // ---------------------------------------------
-
-        private void OnControllerColliderHit(ControllerColliderHit hit)
-        {
-            if(hit.gameObject.tag == "Hint")
-            {
-                //ヒントフィルターの発動
-                sceneManage.Filter(hit.gameObject.name);
-                //ヒントをCOnsolに表示
-                var tmp = GameManageScript.data.GetKeyValues();
-                foreach(var t in tmp)
-                {
-                    if(t.Key.Path.Contains(hit.gameObject.name))
-                    {
-                        Debug.Log("ヒント : "+t.Key.Path + "  :  " + t.Value);
-                    }
-                }
-                Destroy(hit.gameObject);
-            }
-
         }
 
     }
