@@ -16,6 +16,8 @@ namespace PLATEAU.Samples
     public class UIManage : MonoBehaviour, InputScene.ISelectSceneActions
     {
         [SerializeField, Tooltip("初期化中UI")] private UIDocument initializingUi;
+        [SerializeField, Tooltip("ヒントUI")] private UIDocument HintUi;
+        [SerializeField, Tooltip("GMLデータUI")] private UIDocument GmlUi;
         [SerializeField, Tooltip("色分け（高さ）の色テーブル")] private Color[] heightColorTable;
         [SerializeField, Tooltip("色分け（使用用途）の色テーブル")] private Color[] usageColorTable;
         [SerializeField, Tooltip("選択中のオブジェクトの色")] private Color selectedColor;
@@ -28,20 +30,27 @@ namespace PLATEAU.Samples
         private SampleCityObject selectedCityObject;
         private InputScene inputActions;
         private ColorCodeType colorCodeType;
-        private TextMeshProUGUI  FilterLabel;
         private GameObject[] HintTexts;
         private GameObject[] FilterContents;
         private GameManage GameManageScript;
+        private TimeManage TimeManageScript;
         private GameObject displaySelectGML;
-        private List<string> ownHintLst;
         public readonly Dictionary<string, SampleGml> gmls = new Dictionary<string, SampleGml>();
         private string GMLText;
         public string SceneName; 
-        private int filterIndex;
         private bool isSetColorCodeType;
 
 
         public bool isInitialiseFinish = false;
+        private Label filteringLabel;
+        private Label distanceLabel;
+        private Label correctBuildingLabel;
+        private Label selectBuildingLabel;
+        private string filteringLabelText;
+        private string distanceLabelText;
+        private string correctBuildingLabelText;
+        private string selectBuildingLabelText;
+
 
 
         private void Awake()
@@ -81,32 +90,24 @@ namespace PLATEAU.Samples
             SceneName = "MainCamera";
             mainCamera.enabled = true;
             goalCamera.enabled = false;
-            filterIndex = 0;
                 // GameManagerの関数や変数を参照できる
             GameManageScript = GameObject.Find("GameManager").GetComponent<GameManage>();
-                // Canvas内のText(TextMeshProUGUIの場合)オブジェクトの情報を参照できる 
-            FilterLabel = GameObject.Find("FilterLabel").GetComponent<TextMeshProUGUI>();
+            TimeManageScript = GameObject.Find("TimeManager").GetComponent<TimeManage>();
                 // 共通タグのオブジェクトを一つの配列にまとめる
             HintTexts = GameObject.FindGameObjectsWithTag("HintText");
 
-            //ownHintLst or FilterContentsを選択 <-- メモ用 
-            ownHintLst = new List<string>();
-            ownHintLst.Add("None");
-            // ================================================================
-            FilterContents = GameObject.FindGameObjectsWithTag("FilterContent");
-            foreach(GameObject HintContent in FilterContents)
-            {
-                if(HintContent.name != "None")
-                {
-                    HintContent.SetActive(false);
-                }
-                else
-                {
-                    TextMeshProUGUI  filterMesh = HintContent.GetComponent<TextMeshProUGUI>();
-                    filterMesh.color = Color.red;
-                    filterIndex = 0;
-                }
-            }
+
+                //UI
+            filteringLabel = HintUi.rootVisualElement.Q<Label>("FilterLabel");
+            distanceLabel = HintUi.rootVisualElement.Q<Label>("DistanceLabel");
+            correctBuildingLabel = GmlUi.rootVisualElement.Q<Label>("CorrectBuildingLabel");
+            selectBuildingLabel = GmlUi.rootVisualElement.Q<Label>("SelectBuildingLabel");
+
+
+            correctBuildingLabelText = "";
+            distanceLabelText = "ソナー残数 : 5";
+
+            HintUi.gameObject.SetActive(false);
         }
 
         // Plateauのデータに関する関数
@@ -164,12 +165,41 @@ namespace PLATEAU.Samples
             }
         }
 
+        // UIに関する関数
+        // -------------------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// UIを切り替える
+        /// </summary>
+        /// 
+        private void ChangeUIDisplay()
+        {
+            if(HintUi.gameObject.activeSelf)
+            {
+                HintUi.gameObject.SetActive(false);
+                GmlUi.gameObject.SetActive(true);
+                correctBuildingLabel = GmlUi.rootVisualElement.Q<Label>("CorrectBuildingLabel");
+                selectBuildingLabel = GmlUi.rootVisualElement.Q<Label>("SelectBuildingLabel");
+                correctBuildingLabel.text = correctBuildingLabelText;
+                selectBuildingLabel.text = selectBuildingLabelText;
+                // correctBuildingLabel.text = "wwww";
+            }
+            else
+            {
+                GmlUi.gameObject.SetActive(false);
+                HintUi.gameObject.SetActive(true);
+                filteringLabel = HintUi.rootVisualElement.Q<Label>("FilterLabel");
+                distanceLabel = HintUi.rootVisualElement.Q<Label>("DistanceLabel");
+                filteringLabel.text = filteringLabelText;
+                distanceLabel.text = distanceLabelText;
+            }
+        }
+
         // ヒントに関する関数
         // -------------------------------------------------------------------------------------------------------------
         /// <summary>
         /// アイテムを取得した時の処理(Contact.csに参照されている)
         /// </summary>
-        public void Hint(string itemName)
+        public void DisplayAnswerGML(string itemName)
         {
             //正解の建物のGMLデータを表示させる
             foreach(GameObject text in HintTexts)
@@ -182,90 +212,95 @@ namespace PLATEAU.Samples
                         // 表示させるGMLデータを指定
                         if(t.Key.Path.Contains(itemName))
                         {
-                            TextMeshProUGUI hintText = text.GetComponent<TextMeshProUGUI>();
-                            hintText.text = itemName + " : " + t.Value;
+                            if(!correctBuildingLabelText.Contains(itemName))
+                            {
+                                correctBuildingLabelText += itemName + "\n" + t.Value + "\n";
+                                correctBuildingLabel.text = correctBuildingLabelText;
+                            }
                         }
                     }    
                 }
             }
-            // 機能しているフィルターを追加する
-            //ownHintLst or FilterContentsを選択 <-- メモ用 
-            ownHintLst.Add(itemName);
-            //  ================================================================
-            foreach(GameObject FilterContent in FilterContents)
-            {
-                if(FilterContent.name.Contains(itemName))
-                {
-                    FilterContent.SetActive(true);
-                }
-            }
         }
 
-        /// <summary>
-        /// 機能しているフィルターを表示させる Version1
-        /// </summary> 
-        private void ChangeFilter_Filter()
+        private string SetFilterText(string itemName)
         {
-            isSetColorCodeType = false;
-
-            while(!isSetColorCodeType)
+            string filterText = "";
+            if(itemName == "measuredheight")
             {
-                // GMLFilterでActiveなもの(取得済みのアイテムの名前)であるときにフィルターを起動
-                if(FilterContents[filterIndex].activeSelf)
+                float height = 0f;
+                foreach(var t in GameManageScript.correctGMLdata.GetKeyValues())
                 {
-                    // 全ての建物の色を元に戻す
-                    colorCodeType = (ColorCodeType)Enum.Parse(typeof(ColorCodeType), "None");
-                    ColorCode(colorCodeType);
-                    //フィルターに引っかかった建物の色を変える
-                    colorCodeType = (ColorCodeType)Enum.Parse(typeof(ColorCodeType), FilterContents[filterIndex].name);
-                    ColorCode(colorCodeType);
-
-                    // 左側のUI(GMLフィルター)の文字の色を全て黒にする
-                    foreach(GameObject HintContent in FilterContents)
+                    if(t.Key.Path.Contains(itemName))
                     {
-                        TextMeshProUGUI  filterM = HintContent.GetComponent<TextMeshProUGUI>();
-                        filterM.color = Color.black;
+                        height = float.Parse(t.Value);
                     }
-                    // 選択されたフィルターの文字の色を赤色にする
-                    TextMeshProUGUI  filterMesh = FilterContents[filterIndex].GetComponent<TextMeshProUGUI>();
-                    filterMesh.color = Color.red;
-                    break;
-                }
-
-                // 未取得の場合はFilterContentのIndexを増やして次の候補に移る(リストの中で最後の候補であった場合は最初に戻す)
-                if(FilterContents.Length == filterIndex + 1)
+                }    
+                if (height <= 12f)
                 {
-                    filterIndex = 0;
+                    filterText = "~ 12m";
                 }
-                else
+                else if (height > 12f && height <= 31f)
                 {
-                    filterIndex += 1;
+                    filterText = "13m ~ 31m";
+                }
+                else if (height > 31f && height <= 60f)
+                {
+                    filterText = "32m ~ 60m";
+                }
+                else if (height > 60f && height <= 120f)
+                {
+                    filterText = "61m ~ 120m";
+                }
+                else if (height > 120f && height <= 180f)
+                {
+                    filterText = "121m ~ 180m";
+                }
+                else if (height > 180f)
+                {
+                    filterText = "181m ~";
                 }
             }
+            if(itemName == "Usage")
+            {
+                foreach(var t in GameManageScript.correctGMLdata.GetKeyValues())
+                {
+                    if(t.Key.Path.Contains(itemName))
+                    {
+                        filterText = t.Value;
+                    }
+                }
+            }
+            return filterText;
         }
 
 
         /// <summary>
-        /// 機能しているフィルターを表示させる Version2
+        /// 機能しているフィルターを表示させる 
         /// </summary> 
-        private void ChangeFilter_Hints()
+        public void ChangeColoring(string itemName)
         {
+            // TextMeshProUGUI  displayMesh = GameObject.Find("FilterLabel").GetComponent<TextMeshProUGUI>();
+
             // 全ての建物の色を元に戻す
             colorCodeType = (ColorCodeType)Enum.Parse(typeof(ColorCodeType), "None");
             ColorCode(colorCodeType);
             //フィルターに引っかかった建物の色を変える
-            colorCodeType = (ColorCodeType)Enum.Parse(typeof(ColorCodeType), ownHintLst[filterIndex]);
+            colorCodeType = (ColorCodeType)Enum.Parse(typeof(ColorCodeType), itemName);
             ColorCode(colorCodeType);
 
+
+            string filterText = SetFilterText(itemName); 
             // ownHintLstの中のIndexで指定された候補を返す
-            if(ownHintLst[filterIndex] == "None")
+            if(itemName == "None")
             {
-                FilterLabel.text = "フィルターなし";
+                filteringLabelText = $"フィルターなし";
             }
             else
             {
-                FilterLabel.text = ownHintLst[filterIndex];
+                filteringLabelText = itemName + "\n" + filterText;
             }
+            filteringLabel.text = filteringLabelText;
         }
 
 
@@ -368,20 +403,32 @@ namespace PLATEAU.Samples
             GMLText = "";
             var selectbuildingAttribute = GetAttribute(trans.parent.parent.name, trans.name);
             var AttributeKeyValues = selectbuildingAttribute.GetKeyValues();
-            TextMeshProUGUI  displayMesh = GameObject.Find("SelectBuildingGML").GetComponent<TextMeshProUGUI>();
 
             foreach(var AttributeKeyValue in AttributeKeyValues)
             {
-                foreach(GameObject HintContent in FilterContents)
+                foreach(GameObject HintContent in HintTexts)
                 {
                     if(AttributeKeyValue.Key.Path.Contains(HintContent.name))
                     {
-                        GMLText += HintContent.name + "  :  " + AttributeKeyValue.Value + "\n";
+                        GMLText += HintContent.name + "\n" + AttributeKeyValue.Value + "\n\n";
                     }
                 }
             }
-            displayMesh.text = GMLText;
+            selectBuildingLabelText = GMLText;
+            selectBuildingLabel.text = selectBuildingLabelText;
         }
+
+        // 実行時間に依存する処理
+        // -------------------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// ゴールまでの距離を表示させる
+        /// </summary> 
+        public void DisplayDistance()
+        {
+            distanceLabelText = "ソナー残数 : " + GameManageScript.sonarCount + "\n" + "距離 : " + GameManageScript.distance.ToString();
+            distanceLabel.text = distanceLabelText;
+        }
+
         
         // Plateauのデータ取得の終了待ちの関数
         // -------------------------------------------------------------------------------------------------------------
@@ -426,21 +473,17 @@ namespace PLATEAU.Samples
         {
             if(context.performed)
             {
-                if(ownHintLst.Count == filterIndex + 1)
-                {
-                    filterIndex = 0;
-                }
-                else
-                {
-                    filterIndex += 1;
-                }
+                // if(ownHintLst.Count == filterIndex + 1)
+                // {
+                //     filterIndex = 0;
+                // }
+                // else
+                // {
+                //     filterIndex += 1;
+                // }
 
-
-                //ownHintLst or FilterContentsを選択 <-- メモ用 
-
-                // ChangeFilter_Filter();
-                // ================================================================
-                ChangeFilter_Hints();
+                // ChangeFilter_Hints();
+                ChangeUIDisplay();
             }
         }
         /// <summary>

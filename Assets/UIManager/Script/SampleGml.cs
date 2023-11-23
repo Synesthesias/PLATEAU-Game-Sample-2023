@@ -354,26 +354,6 @@ namespace PLATEAU.Samples
             {
                 SetMaterialColor(colorTable[0]);
             }
-            // if(usageName == "集合住宅")
-            // {
-            //     SetMaterialColor(colorTable[0]);
-            //     return;
-            // }
-            // if(usageName == "独立住宅")
-            // {
-            //     SetMaterialColor(colorTable[0]);
-            //     return;
-            // }
-            // if(usageName == "事務所建築物")
-            // {
-            //     SetMaterialColor(colorTable[0]);
-            //     return;
-            // }
-            // if(usageName == "住商併用建物")
-            // {
-            //     SetMaterialColor(colorTable[0]);
-            //     return;
-            // }
         }
 
 

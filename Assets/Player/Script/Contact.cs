@@ -6,19 +6,38 @@ namespace PLATEAU.Samples
 {
     public class Contact : MonoBehaviour
     {
-        private UIManage UIManageScript;
+        private GameManage GameManageScript;
         void Start()
         {
-            UIManageScript = GameObject.Find("UIManager").GetComponent<UIManage>();
+            GameManageScript = GameObject.Find("GameManager").GetComponent<GameManage>();
         }
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
             if(hit.gameObject.tag == "Hint")
             {
                 //UIManageスクリプトのヒント関数を発動
-                UIManageScript.Hint(hit.gameObject.name);
+                GameManageScript.DisplayHint(hit.gameObject.name);
                 //アイテムを削除
                 Destroy(hit.gameObject);
+            }
+            if(hit.gameObject.name == "zombie")
+            {
+                Debug.Log("Game Over");
+                #if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
+                #else
+                    Application.Quit();//ゲームプレイ終了
+                #endif
+            }
+            if(hit.gameObject.name == "Helper")
+            {
+                Debug.Log("Congratuation!!");
+                #if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
+                #else
+                    Application.Quit();//ゲームプレイ終了
+                #endif
+
             }
 
         }

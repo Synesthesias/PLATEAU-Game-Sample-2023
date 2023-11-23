@@ -6,12 +6,11 @@ using UnityEditor;
 public class Zombie : MonoBehaviour
 {
     private Animator animator;
-    public GameObject player;
+    private GameObject player;
     public float distance;
-
     public bool search;
     [SerializeField] private SphereCollider searchArea;
-    [SerializeField] float searchAngle = 230f;
+    [SerializeField] float searchAngle = 180f;
 
     // Start is called before the first frame update
     void Start()
@@ -21,14 +20,10 @@ public class Zombie : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
     void FixedUpdate()
     {
         distance = Vector3.Distance(this.transform.position, player.transform.position);
-        if(distance < 10)
+        if(distance < 30)
         {
             search = true;
         }
@@ -36,20 +31,20 @@ public class Zombie : MonoBehaviour
         {
             search = false;
         }
-        if(distance < 1f)
-        {
-            animator.SetTrigger("Attack");
-        }
-        else
-        {
-            animator.ResetTrigger("Attack");
-        }
+        // if(distance < 5f)
+        // {
+        //     animator.SetTrigger("Attack");
+        // }
+        // else
+        // {
+        //     animator.ResetTrigger("Attack");
+        // }
 
         if(search)
         {
             animator.SetBool("Run",true);
-            transform.position += transform.forward * 0.05f;
-            this.transform.LookAt(player.transform);
+            this.transform.LookAt(new Vector3(player.transform.position.x,this.transform.position.y,player.transform.position.z));
+            transform.position -= transform.forward * 0.1f;
         }
         else
         {
