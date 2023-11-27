@@ -120,7 +120,9 @@ namespace PLATEAU.Samples
             
             //ゴールカメラの位置を変更
             GameObject.Find("GoalSceneCamera").transform.position = goalPos;
-            GameObject.Find("Helper").transform.position = goalPos;
+            //Helperの位置を変更
+            //★デバッグ終了後元に戻す
+            //GameObject.Find("Helper").transform.position = goalPos;
         }
 
         /// <summary>
@@ -154,13 +156,14 @@ namespace PLATEAU.Samples
         /// </summary>
         public void GenerateHintItem()
         {
-            GameObject hintItem = Instantiate(measuredheightItem) as GameObject;
+            //★GameViewの子として生成
+            GameObject hintItem = Instantiate(measuredheightItem, transform.root.gameObject.transform) as GameObject;
             hintItem.name = "measuredheight";
             float itemPosX = Random.Range(-400f,450f);
             float itemPosZ= Random.Range(-200f,200f);
             hintItem.transform.position = new Vector3(itemPosX,100,itemPosZ);
 
-            hintItem = Instantiate(UsageItem) as GameObject;
+            hintItem = Instantiate(UsageItem, transform.root.gameObject.transform) as GameObject;
             hintItem.name = "Usage";
             itemPosX = Random.Range(-400f,450f);
             itemPosZ= Random.Range(-200f,200f);
@@ -169,7 +172,7 @@ namespace PLATEAU.Samples
 
         public void GenerateZombie()
         {
-            GameObject zombie = Instantiate(Zombie) as GameObject;
+            GameObject zombie = Instantiate(Zombie, transform.root.gameObject.transform) as GameObject;
             zombie.name = "zombie";
             float itemPosX = Random.Range(-400f,400f);
             float itemPosZ= Random.Range(-200f,200f);
