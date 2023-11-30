@@ -36,13 +36,14 @@ namespace PLATEAU.Samples
         {
             UIManageScript.ChangeColoring(gmlName);
             yield return new WaitForSeconds(20);
+            UIManageScript.ChangeColoring("None");
+        }
+        public void ColorBuilding(string gmlName)
+        {
             if(itemName == gmlName)
             {
                 UIManageScript.ChangeColoring("None");
             }
-        }
-        public void ColorBuilding(string gmlName)
-        {
             itemName = gmlName;
             StartCoroutine(Coloring(gmlName));
         }

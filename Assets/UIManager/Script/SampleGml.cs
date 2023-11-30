@@ -94,17 +94,17 @@ namespace PLATEAU.Samples
         }
 
         public readonly double? MeasuredHeight;
-        public readonly AttributesMap AttributesMap;
+        public readonly NativeAttributesMap NativeAttributesMap;
         public readonly string RawText;
 
         public readonly string UsageName;
-        public readonly AttributeValue BuildingInfo;
-        public SampleAttribute(AttributesMap attributesMap)
+        public readonly NativeAttributeValue BuildingInfo;
+        public SampleAttribute(NativeAttributesMap nativeAttributesMap)
         {
-            AttributesMap = attributesMap;
-            RawText = AttributesMap.ToString();
+            NativeAttributesMap = nativeAttributesMap;
+            RawText = NativeAttributesMap.ToString();
 
-            MeasuredHeight = AttributesMap.GetValueOrNull("bldg:measuredheight")?.AsDouble;
+            MeasuredHeight = NativeAttributesMap.GetValueOrNull("bldg:measuredheight")?.AsDouble;
 
             var keyValues = GetKeyValues();
             foreach(var i in keyValues)
@@ -117,13 +117,13 @@ namespace PLATEAU.Samples
 
         /// <summary>
         /// List化された属性情報を返す
-        /// AttributesMap内の全ての情報をListに変換しています。
+        /// NativeAttributesMap内の全ての情報をListに変換しています。
         /// </summary>
         /// <returns></returns>
         public List<KeyValuePair<KeyPath, string>> GetKeyValues()
         {
             var keyValues = new List<KeyValuePair<KeyPath, string>>();
-            GetKeyValuesInner(AttributesMap, "", keyValues);
+            GetKeyValuesInner(NativeAttributesMap, "", keyValues);
 
             return keyValues;
         }
@@ -135,18 +135,18 @@ namespace PLATEAU.Samples
         public List<FloodingAreaInfo> GetFloodingAreaInfos()
         {
             var infos = new List<FloodingAreaInfo>();
-            GetFloodingAreaInfosInner(AttributesMap, infos);
+            GetFloodingAreaInfosInner(NativeAttributesMap, infos);
 
             return infos;
         }
 
         private void GetKeyValuesInner(
-            AttributesMap attributesMap,
+            NativeAttributesMap NativeAttributesMap,
             string parentPath,
             List<KeyValuePair<KeyPath, string>> keyValues
         )
         {
-            foreach (var keyValue in attributesMap)
+            foreach (var keyValue in NativeAttributesMap)
             {
                 var path = string.IsNullOrEmpty(parentPath)
                     ? keyValue.Key
@@ -168,9 +168,9 @@ namespace PLATEAU.Samples
             }
         }
 
-        private void GetFloodingAreaInfosInner(AttributesMap attributesMap, List<FloodingAreaInfo> infos)
+        private void GetFloodingAreaInfosInner(NativeAttributesMap NativeAttributesMap, List<FloodingAreaInfo> infos)
         {
-            foreach (var keyValue in attributesMap)
+            foreach (var keyValue in NativeAttributesMap)
             {
                 if (keyValue.Value.Type != AttributeType.AttributeSet) continue;
 
@@ -216,7 +216,7 @@ namespace PLATEAU.Samples
         {
             Id = id;
             CityObject = cityObject;
-            Attribute = new SampleAttribute(cityObject.AttributesMap);
+            Attribute = new SampleAttribute(cityObject.NativeAttributesMap);
             LodObjects = new GameObject[4];
         }
 

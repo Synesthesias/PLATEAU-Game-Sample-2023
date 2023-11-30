@@ -294,7 +294,6 @@ namespace PLATEAU.Samples
             {
                 filteringLabelText = itemName + "\n" + filterText;
             }
-            filteringLabel.text = filteringLabelText;
         }
 
 
@@ -339,8 +338,14 @@ namespace PLATEAU.Samples
             // 方向(ray)と交わったオブジェクトの中から一番PlayerArmatureと距離の近いオブジェクトを返す
             foreach (var hit in Physics.RaycastAll(ray))
             {
-                if (hit.distance <= nearestDistance && hit.transform.name != "PlayerArmature" && !hit.transform.name.Contains("dem"))
+                // if(hit.distance <= nearestDistance)
+                // {
+                //     Debug.Log(hit.transform.name);
+                // }
+                // if (hit.distance <= nearestDistance && hit.transform.name != "PlayerArmature" && !hit.transform.name.Contains("dem"))
+                if (hit.distance <= nearestDistance && hit.transform.name != "PlayerArmature" && !hit.transform.name.Contains("zombie"))
                 {
+                    Debug.Log(hit.transform.name);
                     nearestDistance = hit.distance;
                     nearestTransform = hit.transform;
                 }

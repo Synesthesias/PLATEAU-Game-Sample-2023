@@ -28,6 +28,7 @@ namespace PLATEAU.Samples
         public float sonarCount;
         public float distance;
         KeyValuePair<string, PLATEAU.Samples.SampleCityObject> rndBuilding;
+        private List<string> buildingDirName; 
 
         private void Awake()
         {
@@ -60,6 +61,7 @@ namespace PLATEAU.Samples
             TimeManageScript = GameObject.Find("TimeManager").GetComponent<TimeManage>();
             //Hintのリストを作る
             HintLst = GameObject.FindGameObjectsWithTag("HintText");
+            buildingDirName = new List<string>();
             sonarCount = 5;
             zombieNum = 50;
 
@@ -103,10 +105,19 @@ namespace PLATEAU.Samples
         /// </summary>
         public void SelectGoal()
         {
+            foreach(KeyValuePair<string, SampleGml> dir in UIManageScript.gmls)
+            {
+                if(dir.Key.Contains("bldg"))
+                {
+                    buildingDirName.Add(dir.Key);
+                }
+            }
+
             while(!isSetGMLdata)
             {
+                var tmpdirName = buildingDirName[Random.Range(0,buildingDirName.Count)];
                 //ランダムに建物を指定
-                rndBuilding = UIManageScript.gmls["53394525_bldg_6697_1_op.gml"].CityObjects.ElementAt(rnd.Next(0, UIManageScript.gmls["53394525_bldg_6697_1_op.gml"].CityObjects.Count));
+                rndBuilding = UIManageScript.gmls[tmpdirName].CityObjects.ElementAt(rnd.Next(0, UIManageScript.gmls[tmpdirName].CityObjects.Count));
                 //ゴールのGMLデータ
                 correctGMLdata = rndBuilding.Value.Attribute;
                 isSetGMLdata = CheckGMLdata(correctGMLdata);
