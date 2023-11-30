@@ -4248,6 +4248,7 @@ MonoBehaviour:
   BottomClamp: -30
   CameraAngleOverride: 0
   LockCameraPosition: 0
+  isDied: 0
 --- !u!114 &4096009447424277275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5845,7 +5846,6 @@ MonoBehaviour:
   distance: 0
   search: 0
   searchArea: {fileID: 7600826448744946284}
-  searchAngle: 5
 --- !u!54 &7600826447473823432
 Rigidbody:
   m_ObjectHideFlags: 0

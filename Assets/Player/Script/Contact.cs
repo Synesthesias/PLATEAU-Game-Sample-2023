@@ -1,19 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using StarterAssets;
 
 namespace PLATEAU.Samples
 {
     public class Contact : MonoBehaviour
     {
         private GameManage GameManageScript;
+
+        private ThirdPersonController ThirdPersonControllerScript;
         //★GameViewスクリプトを参照する
-        private GameView gameView;
+        private GameView GameViewScript;
         void Start()
         {
+            ThirdPersonControllerScript = this.GetComponent<ThirdPersonController>();
             GameManageScript = GameObject.Find("GameManager").GetComponent<GameManage>();
-            //★GameViewコンポーネントを取得
-            gameView = transform.root.gameObject.GetComponent<GameView>();
+            GameViewScript = GameObject.Find("GameView").GetComponent<GameView>();
+        }
+        public void GameOverFunc()
+        {
+                ThirdPersonControllerScript.DyingMotion();
+                //★一番上の親（GameView）にゲームオーバーを通知
+                GameViewScript.isGameOver = true ; 
         }
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
@@ -26,9 +35,9 @@ namespace PLATEAU.Samples
             }
             if(hit.gameObject.name == "zombie")
             {
-                Debug.Log("Game Over");
+                ThirdPersonControllerScript.DyingMotion();
                 //★一番上の親（GameView）にゲームオーバーを通知
-                gameView.isGameOver = true ; 
+                GameViewScript.isGameOver = true ; 
 
                 //#if UNITY_EDITOR
                 //    UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
@@ -38,10 +47,9 @@ namespace PLATEAU.Samples
             }
             if(hit.gameObject.name == "Helper")
             {
-                Debug.Log("Congratuation!!");
 
                 //★一番上の親（GameView）にゲームクリアを通知
-                gameView.isGameClear = true;
+                GameViewScript.isGameClear = true;
                 //★スコアを加算（例）TODO:直接値を変えるのは望ましくないため、ViewManager側でスコア加算用の関数を作成する
                 ViewManager.instance.score += 100;
 
