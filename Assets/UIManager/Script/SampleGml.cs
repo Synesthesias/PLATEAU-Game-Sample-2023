@@ -94,12 +94,12 @@ namespace PLATEAU.Samples
         }
 
         public readonly double? MeasuredHeight;
-        public readonly NativeAttributesMap NativeAttributesMap;
+        public readonly AttributesMap NativeAttributesMap;
         public readonly string RawText;
 
         public readonly string UsageName;
-        public readonly NativeAttributeValue BuildingInfo;
-        public SampleAttribute(NativeAttributesMap nativeAttributesMap)
+        public readonly AttributeValue BuildingInfo;
+        public SampleAttribute(AttributesMap nativeAttributesMap)
         {
             NativeAttributesMap = nativeAttributesMap;
             RawText = NativeAttributesMap.ToString();
@@ -141,7 +141,7 @@ namespace PLATEAU.Samples
         }
 
         private void GetKeyValuesInner(
-            NativeAttributesMap NativeAttributesMap,
+            AttributesMap NativeAttributesMap,
             string parentPath,
             List<KeyValuePair<KeyPath, string>> keyValues
         )
@@ -168,7 +168,7 @@ namespace PLATEAU.Samples
             }
         }
 
-        private void GetFloodingAreaInfosInner(NativeAttributesMap NativeAttributesMap, List<FloodingAreaInfo> infos)
+        private void GetFloodingAreaInfosInner(AttributesMap NativeAttributesMap, List<FloodingAreaInfo> infos)
         {
             foreach (var keyValue in NativeAttributesMap)
             {
@@ -216,7 +216,7 @@ namespace PLATEAU.Samples
         {
             Id = id;
             CityObject = cityObject;
-            Attribute = new SampleAttribute(cityObject.NativeAttributesMap);
+            Attribute = new SampleAttribute(cityObject.AttributesMap);
             LodObjects = new GameObject[4];
         }
 
