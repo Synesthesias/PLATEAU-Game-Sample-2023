@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -42,35 +42,35 @@ public class ViewManager : MonoBehaviour
         //yield return debugView.Wait();
         //debugView.Destroy();
 
-        //�ЂƂO��View���L���b�V��
+        //一つ前のViewをキャッシュ
         //ViewBase pre;
 
 
-        //�Q�[�����[�v
+        //ゲームループ
         while(true)
         {
-            //�^�C�g����ʂ����[�h
+            //タイトル画面をロード
             var titleView = ViewBase.Instantiate<TitleView>("TitleView");
             titleView.transform.position = Vector3.zero;
-            //�^�C�g����ʕ\����
+            //タイトル画面表示中
             yield return titleView.Wait();
-            //�^�C�g����ʂ�j��
+            //タイトル画面を破棄
             titleView.DestroyView();
 
-            //�Q�[����ʂ����[�h
+            //ゲーム画面をロード
             var gameView = ViewBase.Instantiate<GameView>("GameView");
             gameView.transform.position = new Vector3(160,65,1500);
-            //�Q�[����ʕ\����
+            //ゲーム画面表示中
             yield return gameView.Wait();
-            //�Q�[����ʂ�j��
+            //ゲーム画面を破棄
             gameView.DestroyView();
 
 
-            ////���U���g��ʂ����[�h
+            ////リザルト画面をロード
             //var resultView = ViewBase.Instantiate<ResultView>("Prefabs/ViewPrefabs/ResultView");
-            ////���U���g��ʕ\����
+            ////リザルト画面表示中
             //yield return resultView.Wait();
-            ////���U���g��ʂ�j��
+            ////リザルト画面を破棄
             //resultView.DestroyView();
 
         }
