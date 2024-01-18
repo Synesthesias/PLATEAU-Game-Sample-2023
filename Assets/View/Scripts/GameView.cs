@@ -26,6 +26,7 @@ public class GameView : ViewBase
 
     void Awake()
     {
+        Cursor.lockState = CursorLockMode.Confined;
         cursor = GameObject.Find("Cursor");
         cursorManage = cursor.GetComponent<CursorManager>();
     }
@@ -33,12 +34,12 @@ public class GameView : ViewBase
     void Start()
     {
         //ゲーム開始
+        transform.position = new Vector3 (0, 0, 0);
         //スタート時はUIを非表示にする
         gameOverUI.enabled = false;
         gameFinishUI.enabled = false;
         gameManage.StartGame();
         cursorManage.OnInvisible();
-        Cursor.lockState = CursorLockMode.Confined;
 
         IsClicked = false;
     }
