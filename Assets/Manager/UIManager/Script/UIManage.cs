@@ -1,4 +1,4 @@
-using PLATEAU.CityInfo;
+﻿using PLATEAU.CityInfo;
 using PLATEAU.Util.Async;
 using System.Collections;
 using System.Collections.Generic;
@@ -413,6 +413,7 @@ namespace PLATEAU.Samples
             if(BuildingInfoDict.ContainsKey(trans.name))
             {
                 GameManageScript.selectBuildingAction(trans.name);
+
             }
 
 

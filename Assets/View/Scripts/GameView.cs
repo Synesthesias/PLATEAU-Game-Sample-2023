@@ -6,11 +6,9 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Cursor = UnityEngine.Cursor;
 
-
+//シーンの基底クラス
 public class GameView : ViewBase
 {
-
-
 
     [SerializeField] private GameManage gameManage;
     [SerializeField, Tooltip("ゲームオーバーUI")] private UIDocument gameOverUI;

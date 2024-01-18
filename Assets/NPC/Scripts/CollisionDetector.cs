@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(Collider))]
+//キャラクターを検知するスクリプト
 public class CollisionDetector : MonoBehaviour
 {
     [SerializeField] private TriggerEvent triggerEnter = new TriggerEvent();

@@ -36,6 +36,7 @@ namespace PLATEAU.Samples
         private TimeManage TimeManageScript;
         private EnemyManage EnemyManageScript;
         private ItemManage ItemManageScript;
+        private NPCManager NPCManageScript;
         private GameObject[] HintLst;
         private GameObject goalBuilding;
         private List<string> buildingDirName;
@@ -83,6 +84,7 @@ namespace PLATEAU.Samples
             TimeManageScript = GameObject.Find("TimeManager").GetComponent<TimeManage>();
             EnemyManageScript = GameObject.Find("EnemyManager").GetComponent<EnemyManage>();
             ItemManageScript = GameObject.Find("ItemManager").GetComponent<ItemManage>();
+            NPCManageScript = GameObject.Find("NPCManager").GetComponent<NPCManager>();
             //Hintのリストを作る
             HintLst = GameObject.FindGameObjectsWithTag("HintText");
             buildingDirName = new List<string>();
@@ -356,9 +358,20 @@ namespace PLATEAU.Samples
             
             rescuingNum -= 1;
             tmpGoalAttribute.evacueeNum += 1;
-            rescuedNum += 1;
-            if(tmpGoalAttribute.capacity == tmpGoalAttribute.evacueeNum)
+
+            //選んだ建物にゴールタグをつける(途中)
+
+            //NPCをランダムに選んで建物へ向かわせる(途中)
+            //NPCManageScript.SendBuilding();
+
+
+            //rescuedNum += 1;
+
+
+            if (tmpGoalAttribute.capacity == tmpGoalAttribute.evacueeNum)
             {
+                //定員を満たした建物のゴールタグを消す
+
                 UIManageScript.DeleteAnswer(clickedBuildingName);
                 GoalAttributeDict.Remove(clickedBuildingName);
                 GameObject flag = GameObject.Find(clickedBuildingName+"flag");
@@ -390,6 +403,12 @@ namespace PLATEAU.Samples
             //     // deleteGoal;
             // }
             
+        }
+
+        //助けた人数を追加する処理
+        public void AddRescueNum()
+        {
+            rescuedNum++;
         }
 
         // InputSystemの入力に対する処理(OnSonar : F)
