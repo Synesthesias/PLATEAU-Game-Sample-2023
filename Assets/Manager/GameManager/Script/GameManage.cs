@@ -386,7 +386,7 @@ namespace PLATEAU.Samples
                 if(tmpGoalAttribute.capacity == tmpGoalAttribute.evacueeNum)
                 {
                     //ゴールの建物のタグを元に戻す
-                    clickedBuilding.gameObject.tag = "";
+                    clickedBuilding.gameObject.tag = "Untagged";
 
                     UIManageScript.DeleteAnswer(clickedBuilding.name);
                     GoalAttributeDict.Remove(clickedBuilding.name);

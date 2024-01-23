@@ -110,8 +110,11 @@ public class NPCController : MonoBehaviour
         }
         else if (tempState == NPCState.Goal)
         {
-            animator.SetFloat("MoveSpeed", RunSpeed);
-            animator.SetBool("IsWalking", true);
+            //animator.SetFloat("MoveSpeed", RunSpeed);
+            //animator.SetBool("IsWalking", true);
+            gameManage.AddRescueNum();
+            //自身を消す
+            Destroy(this.gameObject);
 
         }
     }
@@ -141,6 +144,7 @@ public class NPCController : MonoBehaviour
                 SetState(NPCState.Follow);
             }
         }
+
     }
     //検知範囲にオブジェクトが入っている時
     public void OnObjectStay(Collider collider)
